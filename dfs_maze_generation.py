@@ -98,7 +98,22 @@ def generate_maze():
         pygame.display.flip()
         clock.tick(30)
 
+# ----------------------------
+# CREATE OPENINGS
+# ----------------------------
+def create_openings():
+    start_row = random.randint(0, ROWS - 1)
+    end_row = random.randint(0, ROWS - 1)
+    # Entrance
+    eastWall[start_row][0] = 0
+    # Exit
+    eastWall[end_row][COLS] = 0
+    return (start_row, 0), (end_row, COLS - 1)
+
+start_cell, end_cell = create_openings()
+
 generate_maze()
+create_openings()
 
 running = True
 while running:
