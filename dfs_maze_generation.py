@@ -13,6 +13,8 @@ eastWall = [[1 for _ in range(COLS + 1)] for _ in range(ROWS)]
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (50, 205, 50)
+RED = (220, 20, 60)
+BLUE = (30, 144, 255)
 
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -22,7 +24,7 @@ clock = pygame.time.Clock()
 # ----------------------------
 # DRAW MAZE
 # ----------------------------
-def draw_maze():
+def draw_maze(path=None, dead_ends=None):
     screen.fill(WHITE)
     for r in range(ROWS):
         for c in range(COLS):
@@ -44,6 +46,30 @@ def draw_maze():
                 )
     pygame.draw.line(screen, BLACK, (0, ROWS * CELL_SIZE), (COLS * CELL_SIZE, ROWS * CELL_SIZE), 3)
     pygame.draw.line(screen, BLACK, (0, 0), (0, ROWS * CELL_SIZE), 3)
+
+    if dead_ends:
+        for r, c in dead_ends:
+            pygame.draw.circle(
+                screen,
+                BLUE,
+                (
+                    c * CELL_SIZE + CELL_SIZE // 2,
+                    r * CELL_SIZE + CELL_SIZE // 2
+                ),
+                CELL_SIZE // 6
+            )
+
+    if path:
+        for r, c in path:
+            pygame.draw.circle(
+                screen,
+                RED,
+                (
+                    c * CELL_SIZE + CELL_SIZE // 2,
+                    r * CELL_SIZE + CELL_SIZE // 2
+                ),
+                CELL_SIZE // 4
+            )
 
 # ----------------------------
 # GENERATE MAZE
@@ -114,6 +140,57 @@ start_cell, end_cell = create_openings()
 
 generate_maze()
 create_openings()
+
+# ----------------------------
+# SOLVE MAZE
+# ----------------------------
+def solve_maze(start, end):
+    stack = [start]
+    visited = set()
+    visited.add(start)
+    dead_ends = set()
+
+    while stack:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+
+        current = stack[-1]
+        if current == end:
+            draw_maze(stack, dead_ends)
+            pygame.display.flip()
+            return
+
+        r, c = current
+        moves = []
+        if r > 0:
+            if northWall[r][c] == 0:
+                if (r-1, c) not in visited:
+                    moves.append((r-1, c))
+        if r < ROWS-1:
+            if northWall[r + 1][c] == 0:
+                if (r + 1, c) not in visited:
+                    moves.append((r + 1, c))
+        if c > 0:
+            if eastWall[r][c] == 0:
+                if (r, c-1) not in visited:
+                    moves.append((r, c-1))
+        if c < COLS-1:
+            if eastWall[r][c + 1] == 0:
+                if (r, c + 1) not in visited:
+                    moves.append((r, c + 1))
+
+        if moves:
+            next_cell = random.choice(moves)
+            stack.append(next_cell)
+            visited.add(next_cell)
+        else:
+            dead_ends.add(stack.pop())
+
+        draw_maze(stack, dead_ends)
+        pygame.display.flip()
+        clock.tick(15)
 
 running = True
 while running:
