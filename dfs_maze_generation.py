@@ -17,7 +17,7 @@ RED = (220, 20, 60)
 BLUE = (30, 144, 255)
 
 pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH + CELL_SIZE, HEIGHT))
 pygame.display.set_caption("Maze Generation")
 clock = pygame.time.Clock()
 
@@ -124,6 +124,13 @@ def generate_maze():
         pygame.display.flip()
         clock.tick(30)
 
+    # BONUS FEATURE:
+    # Randomly remove extra walls to create cycles
+    if random.randint(1, 20) == 1:
+        rr = random.randint(1, ROWS - 1)
+        cc = random.randint(1, COLS - 1)
+        northWall[rr][cc] = 0
+
 # ----------------------------
 # CREATE OPENINGS
 # ----------------------------
@@ -191,6 +198,17 @@ def solve_maze(start, end):
         draw_maze(stack, dead_ends)
         pygame.display.flip()
         clock.tick(15)
+
+# Draw final red dot exiting maze
+exit_x = COLS * CELL_SIZE + CELL_SIZE // 4
+exit_y = end[0] * CELL_SIZE + CELL_SIZE // 2
+pygame.draw.circle(
+    screen,
+    RED,
+    (exit_x, exit_y),
+    CELL_SIZE // 4
+)
+pygame.display.flip()
 
 running = True
 while running:
