@@ -6,6 +6,7 @@ This project implements a maze generator and solver using Python and Pygame. The
 - **Maze Generation**: The maze is generated using DFS, with random wall removals to create cycles.
 - **Maze Solving**: The solver uses backtracking to find a path from the entrance to the exit.
 - **Visual Representation**: The maze is displayed using Pygame, with different colors for the generator, solver path, and dead ends.
+- THE LOOM RECORDING IS HERE AS FOLLOWS: https://www.loom.com/share/e8b7697471f247d2af5bb36f75a2ae2b
 
 ## How It Works
 1. **Maze Generation**:
